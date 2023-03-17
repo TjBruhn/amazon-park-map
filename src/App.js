@@ -16,7 +16,7 @@ function App() {
        */
       const webmap = new WebMap({
         portalItem: {
-          id: "aa1d3f80270146208328cf66d022e09c",
+          id: "6b985168463441f28942e228241e63c6", // template value: "aa1d3f80270146208328cf66d022e09c",
         },
       });
 
@@ -53,7 +53,7 @@ function App() {
 
   return (
     <>
-      <div>
+      <div className="header">
         <h1>Amazon Park</h1>
       </div>
       <div className="mapDiv" ref={mapDiv}></div>
