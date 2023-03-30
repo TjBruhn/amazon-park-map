@@ -1,19 +1,107 @@
-.header > h1 {
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  background-color: #e4e8e4;
-  box-sizing: border-box;
-  margin: 0;
-  padding-top: 0.4em;
-  color: #5e5e5e;
-  height: 69px;
-}
-
 .mapDiv {
-  display: flex;
-  padding: 0;
-  margin: 0;
   height: calc(100% - 69px);
   width: 100%;
 }
+
+/* 
+NavBar
+*/
+nav {
+  box-sizing: border-box;
+  height: 69px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.5rem 0rem;
+  background-color: #e4e8e4;
+  color: #5e5e5e;
+  border-bottom: 1px solid darkolivegreen;
+}
+
+.pageTitle * {
+  /* applies to all children and cannot be overridden */
+  text-align: center;
+  margin-block: 0;
+}
+
+.navigation-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navigation-menu ul {
+  display: none;
+}
+
+.expanded ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  /* // navigation menu is positioned to start 60px from the top of the document (which is directly below the navbar) */
+  position: absolute;
+  top: 69px;
+  left: 0;
+  /* // stacks the li tags vertically  */
+  flex-direction: column;
+  /* // makes menu span full height and width */
+  width: 100%;
+  /* height: calc(100vh - 77px); */
+  background-color: white;
+  border-top: 1px solid black;
+  z-index: 1;
+}
+
+.navigation-menu li {
+  text-align: center;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.navigation-menu li button {
+  display: block;
+  text-decoration: none;
+  color: #5e5e5e;
+  font-weight: bold;
+  /* // increases the surface area of the anchor tag to span the full width of the menu */
+  width: 100%;
+  padding: 0.75rem 0;
+  background-color: white;
+  font-size: 18px;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.navigation-menu button:hover {
+  background: #8b8b8b;
+  color: white;
+}
+
+.hamburger:not(:focus):hover {
+  /* add hover effect for hamburger */
+  /* not:(focus) solves hover stick on touch devices */
+  background-color: black;
+  color: white;
+}
+
+.hamburger {
+  border: 0;
+  height: 32px;
+  width: 32px;
+  padding: 0.4rem;
+  border-radius: 50%;
+  background-color: #72747c;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  right: 25px;
+  transform: translateY(-50%);
+  display: block;
+}
+
+/* END NavBar */
