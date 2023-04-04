@@ -51,8 +51,8 @@ nav {
   width: 100%;
   /* height: calc(100vh - 77px); */
   background-color: white;
-  border-top: 1px solid black;
-  z-index: 1;
+  border-block: 1px solid black;
+  z-index: 2;
 }
 
 .navigation-menu li {
@@ -105,3 +105,30 @@ nav {
 }
 
 /* END NavBar */
+
+/* popup pages */
+.popupPage {
+  display: flex;
+  position: absolute;
+  top: 69px;
+  /* left: 0; */
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+
+  height: calc(100% - 69px);
+  z-index: 1;
+  background-color: rgba(159, 159, 159, 0.65);
+}
+
+.popupContent {
+  max-width: 768px;
+  height: max-content;
+  margin: 0.5rem 1rem;
+  padding: 1rem;
+  background-color: rgb(250, 250, 250);
+}
+
+.popupContent label {
+  display: block;
+}

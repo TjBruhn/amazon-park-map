@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Map from "./components/Map";
 import NavBar from "./components/NavBar";
 import ProjectAbout from "./components/ProjectAbout";
@@ -11,6 +11,27 @@ function App() {
   const [isAboutDisplayed, setIsAboutDisplayed] = useState(false);
   const [isSubmissionDisplayed, setIsSubmissionDisplayed] = useState(false);
   const [isFilterDisplayed, setIsFilterDisplayed] = useState(false);
+
+  //state of submission form
+  const [formStage, setFormStage] = useState("initial");
+
+  // a state object to hold submission attributes
+  const [submissionObject, setSubmissionObject] = useState({
+    longitude: 0.0,
+    latitude: 0.0,
+    OBJECTID: 0,
+    name: "",
+    type: "",
+  });
+
+  useEffect(() => {
+    console.log("submissionObject:");
+    console.log(submissionObject);
+    if (formStage === "locate") {
+      setIsSubmissionDisplayed(true);
+      setFormStage("attributes");
+    }
+  }, [submissionObject]);
 
   return (
     <>
@@ -29,8 +50,10 @@ function App() {
       ) : null}
       {isSubmissionDisplayed ? (
         <Submission
-          isSubmissionDisplayed={isSubmissionDisplayed}
           setIsSubmissionDisplayed={setIsSubmissionDisplayed}
+          formStage={formStage}
+          setFormStage={setFormStage}
+          submissionObject={submissionObject}
         ></Submission>
       ) : null}
       {isFilterDisplayed ? (
@@ -40,7 +63,7 @@ function App() {
         ></Filter>
       ) : null}
 
-      <Map></Map>
+      <Map setSubmissionObject={setSubmissionObject}></Map>
     </>
   );
 }

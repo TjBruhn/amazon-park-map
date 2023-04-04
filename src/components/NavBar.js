@@ -6,7 +6,13 @@ const NavBar = ({
   setIsFilterDisplayed,
 }) => {
   function navExpandHandler(buttonClicked) {
+    // Close all open popup windows
     setIsNavExpanded(false);
+    setIsAboutDisplayed(false);
+    setIsSubmissionDisplayed(false);
+    setIsFilterDisplayed(false);
+
+    // Open the associated window
     switch (buttonClicked) {
       case "about":
         setIsAboutDisplayed(true);
