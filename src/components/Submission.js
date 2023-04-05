@@ -33,7 +33,7 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
 function AddAttributes({
   setFormStage,
   setIsSubmissionDisplayed,
-  submissionObject,
+  mapClickObject,
 }) {
   let attributes = {
     caption: "",
@@ -41,9 +41,9 @@ function AddAttributes({
     submissionType: "Submission",
     submissionDateTime: Date.now(),
     reviewStatus: "pending",
-    parkFeatureID: submissionObject.OBJECTID,
-    parkFeature: submissionObject.name,
-    parkFeatureClass: submissionObject.type,
+    parkFeatureID: mapClickObject.OBJECTID,
+    parkFeature: mapClickObject.name,
+    parkFeatureClass: mapClickObject.type,
   };
 
   const layer = new FeatureLayer({
@@ -52,8 +52,8 @@ function AddAttributes({
 
   let point = {
     type: "point", // autocasts as new Point()
-    longitude: submissionObject.longitude,
-    latitude: submissionObject.latitude,
+    longitude: mapClickObject.longitude,
+    latitude: mapClickObject.latitude,
   };
 
   const newFeature = new Graphic({
@@ -156,7 +156,7 @@ function AddAttributes({
         <input
           type="text"
           onChange={(e) => (attributes.parkFeature = e.target.value)}
-          value={submissionObject.name}
+          value={mapClickObject.name}
         />
       </label>
       <label>
@@ -164,7 +164,7 @@ function AddAttributes({
         <input
           type="text"
           onChange={(e) => (attributes.parkFeatureClass = e.target.value)}
-          value={submissionObject.type}
+          value={mapClickObject.type}
         />
       </label>
       <button onClick={submit}>Submit</button>
@@ -177,7 +177,7 @@ const Submission = ({
   setIsSubmissionDisplayed,
   formStage,
   setFormStage,
-  submissionObject,
+  mapClickObject,
 }) => {
   const submissionDisplayHandler = () => {
     setIsSubmissionDisplayed(false);
@@ -210,7 +210,7 @@ const Submission = ({
           <AddAttributes
             setFormStage={setFormStage}
             setIsSubmissionDisplayed={setIsSubmissionDisplayed}
-            submissionObject={submissionObject}
+            mapClickObject={mapClickObject}
           />
         )}
       </div>

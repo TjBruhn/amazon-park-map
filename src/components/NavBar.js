@@ -3,14 +3,13 @@ const NavBar = ({
   setIsNavExpanded,
   setIsAboutDisplayed,
   setIsSubmissionDisplayed,
-  setIsFilterDisplayed,
+  formStage,
 }) => {
   function navExpandHandler(buttonClicked) {
     // Close all open popup windows
     setIsNavExpanded(false);
     setIsAboutDisplayed(false);
     setIsSubmissionDisplayed(false);
-    setIsFilterDisplayed(false);
 
     // Open the associated window
     switch (buttonClicked) {
@@ -20,9 +19,7 @@ const NavBar = ({
       case "submission":
         setIsSubmissionDisplayed(true);
         break;
-      case "filter":
-        setIsFilterDisplayed(true);
-        break;
+
       default:
         break;
     }
@@ -34,6 +31,8 @@ const NavBar = ({
         className={
           isNavExpanded ? "navigation-menu expanded" : "navigation-menu"
         }
+        id="navDiv"
+        data-formstage={formStage}
       >
         <div className="pageTitle">
           <h1>Amazon Park</h1>
@@ -57,15 +56,6 @@ const NavBar = ({
               }}
             >
               Add Submission
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => {
-                navExpandHandler("filter");
-              }}
-            >
-              Filter Submissions
             </button>
           </li>
         </ul>

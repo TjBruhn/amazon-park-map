@@ -4,19 +4,17 @@ import Map from "./components/Map";
 import NavBar from "./components/NavBar";
 import ProjectAbout from "./components/ProjectAbout";
 import Submission from "./components/Submission";
-import Filter from "./components/Filter";
 
 function App() {
   const [isNavExpanded, setIsNavExpanded] = useState(false);
   const [isAboutDisplayed, setIsAboutDisplayed] = useState(false);
   const [isSubmissionDisplayed, setIsSubmissionDisplayed] = useState(false);
-  const [isFilterDisplayed, setIsFilterDisplayed] = useState(false);
 
   //state of submission form
   const [formStage, setFormStage] = useState("initial");
 
   // a state object to hold submission attributes
-  const [submissionObject, setSubmissionObject] = useState({
+  const [mapClickObject, setMapClickObject] = useState({
     longitude: 0.0,
     latitude: 0.0,
     OBJECTID: 0,
@@ -25,13 +23,13 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("submissionObject:");
-    console.log(submissionObject);
+    console.log("mapClickObject:");
+    console.log(mapClickObject);
     if (formStage === "locate") {
       setIsSubmissionDisplayed(true);
       setFormStage("attributes");
     }
-  }, [submissionObject]);
+  }, [mapClickObject]);
 
   return (
     <>
@@ -40,7 +38,7 @@ function App() {
         setIsNavExpanded={setIsNavExpanded}
         setIsAboutDisplayed={setIsAboutDisplayed}
         setIsSubmissionDisplayed={setIsSubmissionDisplayed}
-        setIsFilterDisplayed={setIsFilterDisplayed}
+        formStage={formStage}
       ></NavBar>
       {isAboutDisplayed ? (
         <ProjectAbout
@@ -53,17 +51,11 @@ function App() {
           setIsSubmissionDisplayed={setIsSubmissionDisplayed}
           formStage={formStage}
           setFormStage={setFormStage}
-          submissionObject={submissionObject}
+          mapClickObject={mapClickObject}
         ></Submission>
       ) : null}
-      {isFilterDisplayed ? (
-        <Filter
-          isFilterDisplayed={isFilterDisplayed}
-          setIsFilterDisplayed={setIsFilterDisplayed}
-        ></Filter>
-      ) : null}
 
-      <Map setSubmissionObject={setSubmissionObject}></Map>
+      <Map setMapClickObject={setMapClickObject}></Map>
     </>
   );
 }
