@@ -22,15 +22,6 @@ function App() {
     type: "",
   });
 
-  useEffect(() => {
-    console.log("mapClickObject:");
-    console.log(mapClickObject);
-    if (formStage === "locate") {
-      setIsSubmissionDisplayed(true);
-      setFormStage("attributes");
-    }
-  }, [mapClickObject]);
-
   return (
     <>
       <NavBar
@@ -55,7 +46,10 @@ function App() {
         ></Submission>
       ) : null}
 
-      <Map setMapClickObject={setMapClickObject}></Map>
+      <Map
+        setMapClickObject={setMapClickObject}
+        setFormStage={setFormStage}
+      ></Map>
     </>
   );
 }

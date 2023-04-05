@@ -11,7 +11,6 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
         break;
       case "map":
         setFormStage("locate");
-        setIsSubmissionDisplayed(false);
         break;
       default:
         setFormStage("initial");
@@ -74,42 +73,43 @@ function AddAttributes({
       addFeatures: [newFeature],
     });
 
-    // after successful add get Object Id of new feature
-    const editEvent = layer.on("edits", function (event) {
-      console.log("edit complete", event);
-      const extractObjectId = function (result) {
-        return result.objectId;
-      };
+    // after successful add get Object Id of new feature from the result and use it to add attachment
+    promise
+      .then((result) => {
+        console.log("Feature added: ");
+        console.log(result.addFeatureResults[0]);
 
-      const adds = event.addedFeatures.map(extractObjectId);
-      console.log("addedFeatures: ", adds[0]);
+        // get OID of new feature
+        let justAddedOID = result.addFeatureResults[0]?.objectId;
 
-      // Create Query to retrieve new feature
-      const query = new Query();
-      query.where = "OBJECTID='" + adds[0] + "'";
-      query.returnGeometry = true;
-      query.outFields = ["*"];
+        // Create Query to retrieve new feature
+        const query = new Query();
+        query.where = "OBJECTID='" + justAddedOID + "'";
+        query.returnGeometry = true;
+        query.outFields = ["*"];
 
-      // query for new feature
-      layer.queryFeatures(query).then(function (results) {
-        // get the graphic that was just added
-        let justAddedGraphic = results.features[0];
-        //add the image attachment to the feature
-        layer
-          .addAttachment(justAddedGraphic, formData)
-          .then(function (result) {
-            console.log("attachment added: ", result);
-          })
-          .catch(function (err) {
-            console.log("attachment adding failed: ", err);
-          });
+        // query for new feature
+        layer.queryFeatures(query).then(function (results) {
+          // get the graphic that was just added
+          let justAddedGraphic = results.features[0];
+          //add the image attachment to the feature
+          layer
+            .addAttachment(justAddedGraphic, formData)
+            .then(function (result) {
+              console.log("attachment added: ", result);
+            })
+            .catch(function (err) {
+              console.log("attachment adding failed: ", err);
+            });
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
-      // Remove the event listener prevents multiple submissions
-      editEvent.remove();
-    });
 
     console.log("Bottom of submit");
-    console.log(attributes, promise);
+    console.log(attributes);
+
     setIsSubmissionDisplayed(false);
     setFormStage("initial");
   }
@@ -194,28 +194,38 @@ const Submission = ({
     }
   }
 
-  return (
-    <div className="popupPage">
-      <div className="popupContent">
-        <button onClick={submissionDisplayHandler}>close</button>
-        <button onClick={toggleform}>toggle form</button>
-        <h3>Submit to the Amazon Park Community Experience Project</h3>
-        {formStage === "initial" && (
-          <GetLocation
-            setFormStage={setFormStage}
-            setIsSubmissionDisplayed={setIsSubmissionDisplayed}
-          />
-        )}
-        {formStage === "attributes" && (
-          <AddAttributes
-            setFormStage={setFormStage}
-            setIsSubmissionDisplayed={setIsSubmissionDisplayed}
-            mapClickObject={mapClickObject}
-          />
-        )}
-      </div>
-    </div>
-  );
+  switch (formStage) {
+    case "locate":
+      return (
+        <div className="popupMapInteract">
+          <h3>Click the Location</h3>
+        </div>
+      );
+
+    default:
+      return (
+        <div className="popupPage">
+          <div className="popupContent">
+            <button onClick={submissionDisplayHandler}>close</button>
+            <button onClick={toggleform}>toggle form</button>
+            <h3>Submit to the Amazon Park Community Experience Project</h3>
+            {formStage === "initial" && (
+              <GetLocation
+                setFormStage={setFormStage}
+                setIsSubmissionDisplayed={setIsSubmissionDisplayed}
+              />
+            )}
+            {formStage === "attributes" && (
+              <AddAttributes
+                setFormStage={setFormStage}
+                setIsSubmissionDisplayed={setIsSubmissionDisplayed}
+                mapClickObject={mapClickObject}
+              />
+            )}
+          </div>
+        </div>
+      );
+  }
 };
 
 export default Submission;

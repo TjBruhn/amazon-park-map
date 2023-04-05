@@ -9,7 +9,7 @@ import Search from "@arcgis/core/widgets/Search.js";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
 
-function Map({ setMapClickObject }) {
+function Map({ setMapClickObject, setFormStage }) {
   const mapDiv = useRef(null);
 
   useEffect(() => {
@@ -189,6 +189,7 @@ function Map({ setMapClickObject }) {
                   });
                 }
               }); // END forEach
+              setFormStage("attributes");
             }); //END hittest
           } //END if
         }); //END view.on
