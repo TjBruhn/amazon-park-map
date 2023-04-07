@@ -7,7 +7,7 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
   function getMapInfo(method) {
     switch (method) {
       case "locate":
-        setFormStage("attributes");
+        setFormStage("locate");
         break;
       case "map":
         setFormStage("locate");
