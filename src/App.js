@@ -49,6 +49,7 @@ function App() {
       <Map
         setMapClickObject={setMapClickObject}
         setFormStage={setFormStage}
+        setIsSubmissionDisplayed={setIsSubmissionDisplayed}
       ></Map>
     </>
   );
