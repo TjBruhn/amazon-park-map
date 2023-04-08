@@ -8,7 +8,8 @@ import Search from "@arcgis/core/widgets/Search.js";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
 import TimeSlider from "@arcgis/core/widgets/TimeSlider.js";
-import { mapClick } from "../utils/mapUtils";
+import Locate from "@arcgis/core/widgets/Locate.js";
+import { mapClick, mapLocate } from "../utils/mapUtils";
 
 function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
   const mapDiv = useRef(null);
@@ -205,14 +206,54 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
       reactiveUtils.when(
         () => submissionExpand?.expanded,
         () => {
-          console.log("subExpand clicked");
           setIsSubmissionDisplayed(true);
           submissionExpand.toggle();
         }
       );
+      let locateWidget = new Locate({
+        view: view,
+        container: "locateDiv",
+      });
 
-      // // Get location and feature info on a map click
-      mapClick(view, setMapClickObject, setFormStage);
+      // This is a hack to get the state of formStage without rendering on each formStage state change
+      // Identify the target node
+      const navDiv = document.getElementById("navDiv");
+
+      // Set what to observe on the target node
+      const config = { attributes: true };
+
+      // Callback to be run when a mutation is observed
+      const callback = (mutationList, observer) => {
+        for (const mutation of mutationList) {
+          if (mutation.type === "attributes") {
+            console.log(
+              `The ${mutation.attributeName} attribute was modified.`
+            );
+            switch (navDiv.dataset.formstage) {
+              case "locate":
+                locateWidget.locate().then(function (position) {
+                  // Fires after the user's location has been found
+                  console.log("position", position.coords);
+                  let lat = position.coords.latitude;
+                  let lon = position.coords.longitude;
+                  mapLocate(view, setMapClickObject, setFormStage, lat, lon);
+                });
+                break;
+              case "map":
+                // Get location and feature info on a map click
+                mapClick(view, setMapClickObject, setFormStage);
+                break;
+              default:
+                break;
+            }
+          }
+        }
+      };
+      // Create an observer instance linked to the callback function
+      const observer = new MutationObserver(callback);
+
+      // Start observing the target node for configured mutations
+      observer.observe(navDiv, config);
     }
   }, []);
 

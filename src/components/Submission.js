@@ -10,7 +10,7 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
         setFormStage("locate");
         break;
       case "map":
-        setFormStage("locate");
+        setFormStage("map");
         break;
       default:
         setFormStage("initial");
@@ -195,7 +195,7 @@ const Submission = ({
   }
 
   switch (formStage) {
-    case "locate":
+    case "map":
       return (
         <div className="popupMapInteract">
           <h3>Click the Location</h3>
