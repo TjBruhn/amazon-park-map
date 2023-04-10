@@ -9,6 +9,8 @@ import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
 import TimeSlider from "@arcgis/core/widgets/TimeSlider.js";
 import Locate from "@arcgis/core/widgets/Locate.js";
+import Swipe from "@arcgis/core/widgets/Swipe.js";
+
 import { mapClick, mapLocate } from "../utils/mapUtils";
 
 function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
@@ -47,8 +49,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
 
       const bookmarks = new Bookmarks({
         view,
-        // Allows bookmarks to be added, edited, or deleted
-        editingEnabled: true,
+        editingEnabled: false,
       });
 
       const bkExpand = new Expand({
@@ -58,8 +59,31 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
         autoCollapse: true,
       });
 
-      // Add the widget to the top-right corner of the view
-      view.ui.add(bkExpand, "top-right");
+      // Add the widget to the corner of the view
+      view.ui.add(bkExpand, "top-left");
+
+      // Create an expand to launch submission workflow
+      const submissionExpand = new Expand({
+        view,
+        expandIconClass: "esri-icon-plus-circled",
+        expandTooltip: "Add Submission",
+        expanded: false,
+        autoCollapse: true,
+      });
+      view.ui.add(submissionExpand, "top-right");
+
+      // When the submission expand is expanded start the submission workflow
+      reactiveUtils.when(
+        () => submissionExpand?.expanded,
+        () => {
+          setIsSubmissionDisplayed(true);
+          submissionExpand.toggle();
+        }
+      );
+      let locateWidget = new Locate({
+        view: view,
+        container: "locateDiv",
+      });
 
       // const submissionLayer = new FeatureLayer({
       //   url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/submission/FeatureServer",
@@ -135,9 +159,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
         autoCollapse: true,
         mode: "floating",
       });
-      view.ui.add(searchExpand, {
-        position: "top-right",
-      });
+      view.ui.add(searchExpand, "top-right");
 
       // creates a date object that is 7 days back from current date
       function oneWeekAgo() {
@@ -174,6 +196,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
         view,
         expandIconClass: "esri-icon-time-clock",
         expandTooltip: "Filter Submissions by Date",
+        collapseTooltip: "Close Time Slider",
         expanded: false,
         mode: "floating",
       });
@@ -187,33 +210,53 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
           bkExpand.visible = !bkExpand.visible;
           searchExpand.visible = !searchExpand.visible;
           submissionExpand.visible = !submissionExpand.visible;
+          swipeExpand.visible = !swipeExpand.visible;
         }
       );
 
-      // Create an expand to launch submission workflow
-      const submissionExpand = new Expand({
+      // Get all layers for use in the swipe
+      const allLayers = webmap.layers;
+
+      // Set variable to assign swipe instances to
+      let swipe;
+
+      // Create an expand to show/hide the time slider
+      const swipeExpand = new Expand({
         view,
-        expandIconClass: "esri-icon-plus-circled",
-        expandTooltip: "Add Submission",
+        expandIconClass: "esri-icon-sign-out",
+        expandTooltip: "Inspect Satelitte View with Swipe",
+        collapseTooltip: "Close Swipe",
         expanded: false,
-        autoCollapse: true,
+        mode: "floating",
       });
-      view.ui.add(submissionExpand, {
-        position: "top-right",
-      });
+      view.ui.add(swipeExpand, "top-right");
 
-      // When the submission expand is expanded start the submission workflow
-      reactiveUtils.when(
-        () => submissionExpand?.expanded,
+      // When the Swipe expand is expanded add Swipe widget and destory on collapse
+      reactiveUtils.watch(
+        () => swipeExpand?.expanded,
         () => {
-          setIsSubmissionDisplayed(true);
-          submissionExpand.toggle();
+          switch (swipeExpand?.expanded) {
+            case true:
+              swipe = new Swipe({
+                view: view,
+                trailingLayers: allLayers,
+                direction: "horizontal", // swipe widget will move left and right
+                position: 30, // position set to a third of the view (30%)
+              });
+              view.ui.add(swipe);
+              // Change Basemap
+              webmap.basemap = "hybrid";
+              break;
+            case false:
+              swipe.destroy();
+              // change basemap back to original
+              webmap.basemap = "gray-vector";
+              break;
+            default:
+              break;
+          }
         }
       );
-      let locateWidget = new Locate({
-        view: view,
-        container: "locateDiv",
-      });
 
       // This is a hack to get the state of formStage without rendering on each formStage state change
       // Identify the target node
@@ -240,6 +283,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
                 });
                 break;
               case "map":
+              case "offMap":
                 // Get location and feature info on a map click
                 mapClick(view, setMapClickObject, setFormStage);
                 break;

@@ -201,7 +201,16 @@ const Submission = ({
           <h3>Click the Location</h3>
         </div>
       );
-
+    case "offMap":
+      return (
+        <div className="popupMapInteract">
+          <h5>
+            That location is off the map
+            <br />
+            Try Clicking the Location
+          </h5>
+        </div>
+      );
     default:
       return (
         <div className="popupPage">

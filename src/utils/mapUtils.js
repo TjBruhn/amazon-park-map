@@ -5,8 +5,8 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
   view.hitTest(hitArg).then(function (response) {
     let graphicHitsArray = response.results;
 
-    console.log("grphic hits", graphicHitsArray[0]);
-    // TODO: set condition that if location is outside park it offers a prompt to click instead.
+    // Varible to record if a layer was hit
+    let wasLayerHit = false;
 
     graphicHitsArray.forEach((graphicHit) => {
       if (
@@ -14,6 +14,10 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
         graphicHit.layer.type === "feature" &&
         graphicHit.layer.title !== "submission"
       ) {
+        // Confirm that a layer was hit
+        wasLayerHit = true;
+
+        // set variables
         let lat = graphicHit.mapPoint.latitude;
         let lon = graphicHit.mapPoint.longitude;
         let attrs = graphicHit.graphic.attributes;
@@ -21,6 +25,8 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
         console.log("<<<<New Result>>>>");
         console.log("Attributes: ");
         console.log(attrs);
+
+        // Write variables to mapclickobject
         setMapClickObject({
           longitude: lon,
           latitude: lat,
@@ -30,7 +36,9 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
         });
       }
     }); // END forEach
-    setFormStage("attributes");
+
+    // If the location is on the map advance to the attribute stage if not prompt to select location on map
+    wasLayerHit ? setFormStage("attributes") : setFormStage("offMap");
   }); // END hittest
 }
 
@@ -61,16 +69,16 @@ export function mapClick(view, setMapClickObject, setFormStage) {
 export function mapLocate(view, setMapClickObject, setFormStage, lat, lon) {
   console.log("mapLocate called");
 
-  const mapPoint = new Point({
-    latitude: 44.031556063782176,
-    longitude: -123.08528967857363,
-  });
+  // const mapPoint = new Point({
+  //   latitude: 44.031556063782176,
+  //   longitude: -123.08528967857363,
+  // });
 
   // get the screen point for the specified map point.
-  // const mapPoint = new Point({
-  //   latitude: lat,
-  //   longitude: lon,
-  // });
+  const mapPoint = new Point({
+    latitude: lat,
+    longitude: lon,
+  });
 
   const screenPoint = view.toScreen(mapPoint);
   console.log("screenpoint: ", screenPoint);

@@ -31,10 +31,9 @@ const NavBar = ({
         className={
           isNavExpanded ? "navigation-menu expanded" : "navigation-menu"
         }
+        id="navDiv"
+        data-formstage={formStage}
       >
-        <div id="navDiv" data-formstage={formStage}>
-          {formStage}
-        </div>
         <div className="pageTitle">
           <h1>Amazon Park</h1>
           <h3>Community Experience</h3>
