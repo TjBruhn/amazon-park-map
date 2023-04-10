@@ -61,7 +61,6 @@ export function mapClick(view, setMapClickObject, setFormStage) {
         closepopup();
       }
     );
-
     executeHitTest(view, setMapClickObject, setFormStage, event);
   }); // END view.on
 } // END mapClick
