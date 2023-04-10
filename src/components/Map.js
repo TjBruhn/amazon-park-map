@@ -207,7 +207,6 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
         () => timeExpand?.expanded,
         () => {
           timeSlider.visible = !timeSlider.visible;
-          bkExpand.visible = !bkExpand.visible;
           searchExpand.visible = !searchExpand.visible;
           submissionExpand.visible = !submissionExpand.visible;
           swipeExpand.visible = !swipeExpand.visible;

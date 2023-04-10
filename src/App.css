@@ -3,6 +3,11 @@
   width: 100%;
 }
 
+/* override default min width to make fit on small screen */
+.esri-time-slider {
+  min-width: 340px;
+}
+
 /* 
 NavBar
 */
