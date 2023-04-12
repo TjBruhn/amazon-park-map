@@ -223,7 +223,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
       const swipeExpand = new Expand({
         view,
         expandIconClass: "esri-icon-sign-out",
-        expandTooltip: "Inspect Satelitte View with Swipe",
+        expandTooltip: "Satelitte View with Swipe",
         collapseTooltip: "Close Swipe",
         expanded: false,
         mode: "floating",
@@ -269,7 +269,7 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
         for (const mutation of mutationList) {
           if (mutation.type === "attributes") {
             console.log(
-              `The ${mutation.attributeName} attribute was modified.`
+              `The ${mutation.attributeName} attribute was modified: ${navDiv.dataset.formstage}`
             );
             switch (navDiv.dataset.formstage) {
               case "locate":

@@ -151,11 +151,54 @@ nav {
   z-index: 1;
 }
 .popupMapInteract h3,
-.popupMapInteract h5 {
+.popupMapInteract h5,
+.popupContent h3,
+.popupContent p {
   max-width: 768px;
   height: max-content;
   margin: 0;
   padding: 0.55rem;
-
   text-align: center;
+}
+
+.attributeForm {
+  margin-inline: 20%;
+}
+
+.attributeForm label,
+.attributeForm form {
+  padding-bottom: 0.5rem;
+}
+
+.subFormInput {
+  /* margin-left: 0.5rem; */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#imgfile {
+  box-sizing: border-box;
+  /* forces filename to compress within the available space */
+  width: 100%;
+  text-align: center;
+  padding-block: 0.45rem;
+  border: 1px solid #72747c;
+  background-color: white;
+}
+
+.submissionBtns {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+.submissionBtns button {
+  margin-inline: 0.1rem;
+}
+
+@media screen and (max-width: 480px) {
+  .attributeForm {
+    margin-inline: 2%;
+  }
 }

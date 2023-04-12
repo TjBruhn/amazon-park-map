@@ -17,7 +17,7 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
         // Confirm that a layer was hit
         wasLayerHit = true;
 
-        // set variables
+        // Set variables
         let lat = graphicHit.mapPoint.latitude;
         let lon = graphicHit.mapPoint.longitude;
         let attrs = graphicHit.graphic.attributes;
@@ -45,7 +45,9 @@ function executeHitTest(view, setMapClickObject, setFormStage, hitArg) {
 // Get location and feature info on a map click
 export function mapClick(view, setMapClickObject, setFormStage) {
   // Listen to the click event on the view
-  view.on("click", async (event) => {
+  const viewOnClick = view.on("click", handleMapClick);
+
+  function handleMapClick(event) {
     // Watch the popup and if it opens close it
     function closepopup() {
       view.popup.close();
@@ -61,19 +63,24 @@ export function mapClick(view, setMapClickObject, setFormStage) {
         closepopup();
       }
     );
+    // Run the Hit Test
     executeHitTest(view, setMapClickObject, setFormStage, event);
-  }); // END view.on
+
+    // Remove the event listener
+    viewOnClick.remove();
+  }
 } // END mapClick
 
 export function mapLocate(view, setMapClickObject, setFormStage, lat, lon) {
   console.log("mapLocate called");
 
+  // Specific map point on map for testing
   // const mapPoint = new Point({
   //   latitude: 44.031556063782176,
   //   longitude: -123.08528967857363,
   // });
 
-  // get the screen point for the specified map point.
+  // Get the screen point for the specified map point.
   const mapPoint = new Point({
     latitude: lat,
     longitude: lon,

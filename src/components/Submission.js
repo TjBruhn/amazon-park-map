@@ -1,9 +1,16 @@
+import { useState, useEffect } from "react";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer.js";
 import Graphic from "@arcgis/core/Graphic.js";
 import Query from "@arcgis/core/rest/support/Query.js";
 
-// sets the initial form in the submission workflow
+// Sets the initial form in the submission workflow
 function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
+  function cancel() {
+    console.log("cancel");
+    setIsSubmissionDisplayed(false);
+    setFormStage("initial");
+  }
+
   function getMapInfo(method) {
     switch (method) {
       case "locate":
@@ -21,20 +28,23 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
   }
   return (
     <>
-      <h5>First we need to get the location of the submission</h5>
-      <button onClick={() => getMapInfo("locate")}>Use My Location</button>
-      <button onClick={() => getMapInfo("map")}>Select Location on Map</button>
+      <p>How do you want to provide the location of the submission?</p>
+      <div className="submissionBtns">
+        <button onClick={() => getMapInfo("locate")}>Use My Location</button>
+        <button onClick={() => getMapInfo("map")}>Click on Map</button>
+        <button onClick={cancel}>Cancel</button>
+      </div>
     </>
   );
 }
 
-// That attribute collection form and submission logic
+// The attribute collection form and submission logic
 function AddAttributes({
   setFormStage,
   setIsSubmissionDisplayed,
   mapClickObject,
 }) {
-  let attributes = {
+  const [attributes, setAttributes] = useState({
     caption: "",
     userName: "",
     submissionType: "Submission",
@@ -43,14 +53,19 @@ function AddAttributes({
     parkFeatureID: mapClickObject.OBJECTID,
     parkFeature: mapClickObject.name,
     parkFeatureClass: mapClickObject.type,
-  };
+  });
+
+  // Run enable submit when attributes changes
+  useEffect(enableSubmit, [attributes]);
+
+  const [submitDisabled, setsubmitDisabled] = useState(true);
 
   const layer = new FeatureLayer({
     url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/submission/FeatureServer",
   });
 
   let point = {
-    type: "point", // autocasts as new Point()
+    type: "point", // Autocasts as new Point()
     longitude: mapClickObject.longitude,
     latitude: mapClickObject.latitude,
   };
@@ -62,24 +77,24 @@ function AddAttributes({
 
   function submit() {
     console.log("top of Submit");
-    //reference for adding features https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#applyEdits
+    // Reference for adding features https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#applyEdits
 
     // Get the image from the attachment form
     var attachmentForm = document.getElementById("imgUploadForm");
     const formData = new FormData(attachmentForm);
 
-    // add the new feature
+    // Add the new feature
     const promise = layer.applyEdits({
       addFeatures: [newFeature],
     });
 
-    // after successful add get Object Id of new feature from the result and use it to add attachment
+    // After successful add get Object Id of new feature from the result and use it to add attachment
     promise
       .then((result) => {
         console.log("Feature added: ");
         console.log(result.addFeatureResults[0]);
 
-        // get OID of new feature
+        // Get OID of new feature
         let justAddedOID = result.addFeatureResults[0]?.objectId;
 
         // Create Query to retrieve new feature
@@ -88,11 +103,11 @@ function AddAttributes({
         query.returnGeometry = true;
         query.outFields = ["*"];
 
-        // query for new feature
+        // Query for new feature
         layer.queryFeatures(query).then(function (results) {
-          // get the graphic that was just added
+          // Get the graphic that was just added
           let justAddedGraphic = results.features[0];
-          //add the image attachment to the feature
+          // Add the image attachment to the feature
           layer
             .addAttachment(justAddedGraphic, formData)
             .then(function (result) {
@@ -119,57 +134,100 @@ function AddAttributes({
     setIsSubmissionDisplayed(false);
     setFormStage("initial");
   }
+
+  //
+  function enableSubmit() {
+    let disableSubmit = true;
+    var attachmentForm = document.getElementById("imgfile");
+
+    // Check for an image
+    if (!attachmentForm.files.length) {
+      setsubmitDisabled(disableSubmit);
+      return;
+    }
+    // Check that all the other fields are complete
+    for (const property in attributes) {
+      if (!attributes[property]) {
+        disableSubmit = true;
+        break;
+      } else {
+        disableSubmit = false;
+      }
+    }
+
+    setsubmitDisabled(disableSubmit);
+    return;
+  }
+  // Form elements that could be added if app extended to use relationship between park features and submissions
+  // <label>
+  //       Park Feature:
+  //       <input
+  //         type="text"
+  //         onChange={(e) => (attributes.parkFeature = e.target.value)}
+  //         value={mapClickObject.name}
+  //       />
+  //     </label>
+  //     <label>
+  //       Park Feature Class:
+  //       <input
+  //         type="text"
+  //         onChange={(e) => (attributes.parkFeatureClass = e.target.value)}
+  //         value={mapClickObject.type}
+  //       />
+  //     </label>
   return (
-    <>
+    <div className="attributeForm">
       <form id="imgUploadForm">
-        Image:
-        <input type="file" name="attachment" />
+        <label htmlFor="imgfile">Select an Image:</label>
+        <input
+          type="file"
+          id="imgfile"
+          name="attachment"
+          accept="image/png, image/jpeg"
+          onChange={(e) => enableSubmit()}
+        />
       </form>
       <label>
         Caption:
         <textarea
+          className="subFormInput"
           rows="2"
-          onChange={(e) => (attributes.caption = e.target.value)}
+          onChange={(e) => {
+            setAttributes({ ...attributes, caption: e.target.value });
+          }}
         />
       </label>
       <label>
         Submitted by:
         <input
+          className="subFormInput"
           type="text"
-          onChange={(e) => (attributes.userName = e.target.value)}
+          onChange={(e) => {
+            setAttributes({ ...attributes, userName: e.target.value });
+          }}
         />
       </label>
       <label>
         Submission Type:
         <select
-          list="submissionType"
-          onChange={(e) => (attributes.submissionType = e.target.value)}
+          className="subFormInput"
+          list="{submissionType"
+          onChange={(e) => {
+            setAttributes({ ...attributes, submissionType: e.target.value });
+          }}
           defaultValue={"Submission"}
         >
           <option value="Submission">Submission</option>
           <option value="report">Report an Issue</option>
         </select>
       </label>
-
-      <label>
-        Park Feature:
-        <input
-          type="text"
-          onChange={(e) => (attributes.parkFeature = e.target.value)}
-          value={mapClickObject.name}
-        />
-      </label>
-      <label>
-        Park Feature Class:
-        <input
-          type="text"
-          onChange={(e) => (attributes.parkFeatureClass = e.target.value)}
-          value={mapClickObject.type}
-        />
-      </label>
-      <button onClick={submit}>Submit</button>
-      <button onClick={cancel}>Cancel</button>
-    </>
+      <div className="submissionBtns">
+        <button onClick={submit} disabled={submitDisabled}>
+          Submit
+        </button>
+        <button onClick={cancel}>Cancel</button>
+      </div>
+    </div>
   );
 }
 
@@ -179,21 +237,6 @@ const Submission = ({
   setFormStage,
   mapClickObject,
 }) => {
-  const submissionDisplayHandler = () => {
-    setIsSubmissionDisplayed(false);
-    setFormStage("initial");
-  };
-
-  function toggleform() {
-    switch (formStage) {
-      case "initial":
-        setFormStage("attributes");
-        break;
-      default:
-        setFormStage("initial");
-    }
-  }
-
   switch (formStage) {
     case "map":
       return (
@@ -215,9 +258,8 @@ const Submission = ({
       return (
         <div className="popupPage">
           <div className="popupContent">
-            <button onClick={submissionDisplayHandler}>close</button>
-            <button onClick={toggleform}>toggle form</button>
             <h3>Submit to the Amazon Park Community Experience Project</h3>
+            <hr />
             {formStage === "initial" && (
               <GetLocation
                 setFormStage={setFormStage}
