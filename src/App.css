@@ -129,6 +129,8 @@ nav {
 .popupContent {
   max-width: 768px;
   height: max-content;
+  max-height: 90%;
+  overflow: scroll;
   margin: 0.5rem 1rem;
   padding: 1rem;
   background-color: rgb(250, 250, 250);
@@ -153,11 +155,11 @@ nav {
 .popupMapInteract h3,
 .popupMapInteract h5,
 .popupContent h3,
-.popupContent p {
+.popupP {
   max-width: 768px;
   height: max-content;
   margin: 0;
-  padding: 0.55rem;
+  padding-block: 0.55rem;
   text-align: center;
 }
 
@@ -174,6 +176,7 @@ nav {
   /* margin-left: 0.5rem; */
   box-sizing: border-box;
   width: 100%;
+  border-radius: 0.2rem;
 }
 
 #imgfile {
@@ -183,6 +186,7 @@ nav {
   text-align: center;
   padding-block: 0.45rem;
   border: 1px solid #72747c;
+  border-radius: 0.2rem;
   background-color: white;
 }
 

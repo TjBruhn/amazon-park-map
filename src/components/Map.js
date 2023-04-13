@@ -4,6 +4,7 @@ import WebMap from "@arcgis/core/WebMap";
 import Bookmarks from "@arcgis/core/widgets/Bookmarks";
 import Expand from "@arcgis/core/widgets/Expand";
 import Home from "@arcgis/core/widgets/Home";
+import Legend from "@arcgis/core/widgets/Legend.js";
 import Search from "@arcgis/core/widgets/Search.js";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils.js";
@@ -55,12 +56,29 @@ function Map({ setMapClickObject, setFormStage, setIsSubmissionDisplayed }) {
       const bkExpand = new Expand({
         view,
         content: bookmarks,
+        expandTooltip: "View Bookmarks",
+        collapseTooltip: "Close Bookmarks",
         expanded: false,
         autoCollapse: true,
       });
 
       // Add the widget to the corner of the view
       view.ui.add(bkExpand, "top-left");
+
+      const legend = new Legend({
+        view: view,
+      });
+
+      const legendExpand = new Expand({
+        view,
+        content: legend,
+        expandTooltip: "View Legend",
+        collapseTooltip: "Close Legend",
+        expanded: false,
+        autoCollapse: true,
+      });
+
+      view.ui.add(legendExpand, "top-left");
 
       // Create an expand to launch submission workflow
       const submissionExpand = new Expand({

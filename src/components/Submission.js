@@ -28,7 +28,9 @@ function GetLocation({ setFormStage, setIsSubmissionDisplayed }) {
   }
   return (
     <>
-      <p>How do you want to provide the location of the submission?</p>
+      <p className="popupP">
+        How do you want to provide the location of the submission?
+      </p>
       <div className="submissionBtns">
         <button onClick={() => getMapInfo("locate")}>Use My Location</button>
         <button onClick={() => getMapInfo("map")}>Click on Map</button>
@@ -195,6 +197,7 @@ function AddAttributes({
           onChange={(e) => {
             setAttributes({ ...attributes, caption: e.target.value });
           }}
+          maxLength="256"
         />
       </label>
       <label>
@@ -205,6 +208,7 @@ function AddAttributes({
           onChange={(e) => {
             setAttributes({ ...attributes, userName: e.target.value });
           }}
+          maxLength="100"
         />
       </label>
       <label>
@@ -258,7 +262,7 @@ const Submission = ({
       return (
         <div className="popupPage">
           <div className="popupContent">
-            <h3>Submit to the Amazon Park Community Experience Project</h3>
+            <h3>Contribute to the Amazon Park Community Experience</h3>
             <hr />
             {formStage === "initial" && (
               <GetLocation
