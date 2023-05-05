@@ -1,4 +1,11 @@
-# Getting Started with Create React App
+# Amazon Park Community Experience App
+G777 Capstone Project #2, University of Wisconsin-Madision, Master's in GIS Development
+
+Web mapping application for users to submite experiences in Amazon park.\
+Created with React and the ArcGIS Javascript SDK.
+
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
