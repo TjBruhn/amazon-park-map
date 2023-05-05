@@ -1,7 +1,7 @@
 # Amazon Park Community Experience App
 G777 Capstone Project #2, University of Wisconsin-Madision, Master's in GIS Development
 
-Web mapping application for users to submite experiences in Amazon park.\
+Web mapping application for users to submit experiences in Amazon park.\
 Created with React and the ArcGIS Javascript SDK.
 
 
